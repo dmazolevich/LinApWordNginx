@@ -1,24 +1,17 @@
-echo -n "Write the number: "
-read i
-fibon() {
-    local i=$1
-    if (( i < 0 )); then
+echo -n "Write the number of Fibonacci: "
+read INPUT_NUMBER_OF_FIBONACCI
+function recursive_calculating_by_entering_number() {
+    local INPUT_NUMBER_OF_FIBONACCI=$1
+    if (( INPUT_NUMBER_OF_FIBONACCI < 0 )); then
         echo "Error: negative number" >&2
         exit 1
-
-    elif (( i <= 1 )); then
-        echo $i
+    
+    elif (( INPUT_NUMBER_OF_FIBONACCI <= 1 )); then
+        echo $INPUT_NUMBER_OF_FIBONACCI
 
     else
-        echo $(( $(fibon $((i - 1)) ) + $(fibon $((i - 2)) ) ))
+        echo $(( $( $FUNCNAME $((INPUT_NUMBER_OF_FIBONACCI - 1)) ) + $( $FUNCNAME $((INPUT_NUMBER_OF_FIBONACCI - 2)) ) ))
     fi
 }
+recursive_calculating_by_entering_number $INPUT_NUMBER_OF_FIBONACCI
 
-fib_count() {
-    local i
-    for (( i = 1; i <= $1; i++ )); do
-        fibon $i
-    done
-}
-
-fibon $i

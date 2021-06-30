@@ -1,0 +1,33 @@
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - deploy
+
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - echo "Compile complete."
+
+deploy-production:
+  stage: deploy
+  before_script:
+    - sudo apt update
+    - sudo apt install apt-transport-https ca-certificates curl software-properties-common
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+    - sudo apt update
+    - sudo apt install docker-ce
+    - sudo systemctl status docker
+    - sudo usermod -aG docker ${USER}
+    - su - ${USER}
+    - sudo usermod -a -G docker $USER 
+    - sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - sudo chmod +x /usr/local/bin/docker-compose  
+  only:
+    - webLAMP
+  tags:
+    - WP
+  script:
+    - docker-compose -f docker-compose.yml build --no-cache
+    - docker-compose -f docker-compose.yml up -d
